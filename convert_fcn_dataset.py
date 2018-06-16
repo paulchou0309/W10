@@ -10,8 +10,8 @@ from object_detection.utils import dataset_util
 
 
 flags = tf.app.flags
-flags.DEFINE_string('data_dir', '/home/wangpei/tmp/VOC2012', 'Root directory to raw pet dataset.')
-flags.DEFINE_string('output_dir', '/home/wangpei/tmp/output/', 'Path to directory to output TFRecords.')
+flags.DEFINE_string('data_dir', '', 'Root directory to raw pet dataset.')
+flags.DEFINE_string('output_dir', '', 'Path to directory to output TFRecords.')
 
 FLAGS = flags.FLAGS
 
@@ -55,7 +55,17 @@ def dict_to_tf_example(data, label):
         print('the ima default_image_size*** %d*******'%vgg_16.default_image_size)
 
         return None
-
+feature_dict = {
+        'image/height':  dataset_util.int64_feature(height),
+        'image/width': dataset_util.int64_feature(width),
+        'image/filename': dataset_util.bytes_feature(
+          data.encode('utf8')),
+        'image/encoded': dataset_util.bytes_feature(encoded_data),
+        'image/label': dataset_util.bytes_feature(encoded_label),
+        'image/format': dataset_util.bytes_feature('png'.encode('utf8')),
+    }
+    example = tf.train.Example(features=tf.train.Features(feature=feature_dict))
+    return example
     # Your code here, fill the dict
     
     ################
